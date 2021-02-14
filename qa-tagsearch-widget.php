@@ -25,12 +25,13 @@ class qa_tagsearch_widget {
 
 
 
-		$out='<div class="qam-tag-search"> <div class="qa-tag-search">
+		$out='<div class="qam-tag-search"> <div class="qa-tag-search qa-search">
 			<form method="GET" action="'.qa_path('tag-search-page').'">
 			<input type="text" name="q" id="tag_search" autocomplete="off" class="qa-tag-search-field"  placeholder="Tag Search" onkeyup="qa_tag_search_hints()" onmouseup="qa_tag_search_hints()">
-			<input type="submit" value="tagsearch" class="qa-tag-search-button"  >
-
-			<div class="qa-form-tall-note">
+			<button type="submit" value="tagsearch" class="qa-search-button fa fa-search"></button>
+			<input type="checkbox" id="exact-tag-match" name="exact-tag-match">
+			<label for="exact-tag-match">Exact tag match</label>
+			<div class="qa-form-tall-note2">
 			<span id="tag_search_examples_title" style="display:none;"> </span>
 			<span id="tag_search_complete_title" style="display:none;"></span>
 			<span id="tag_search_hints"></span></div> </form>

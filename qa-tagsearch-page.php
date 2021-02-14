@@ -47,8 +47,8 @@ class qa_tagsearch_page{
 
 			$inquery=trim(qa_get('q'));
 			$num = explode('+', $inquery);
-		//	if(count($num) == 1) //just one query
-				
+			$exact_tag_match = (bool)qa_get('exact-tag-match');
+
 			$userid=qa_get_logged_in_userid();
 			$start=qa_get_start();
 
@@ -58,7 +58,7 @@ class qa_tagsearch_page{
 
 			//	Perform the search using appropriate module
 
-			$results=$this->qa_get_tag_search_results($inquery, $start, $count, $userid, false, false);
+			$results=$this->qa_get_tag_search_results($inquery, $exact_tag_match, $start, $count, $userid);
 
 			//	Count and truncate results
 
@@ -90,7 +90,7 @@ class qa_tagsearch_page{
 		$qa_content=qa_content_prepare(true);
 
 		if (strlen(qa_get('q'))) {
-			$qa_content['search']['value']=qa_html($inquery);
+		//	$qa_content['search']['value']=qa_html($inquery);
 
 			if (count($results))
 				$qa_content['title']=qa_lang_html_sub('main/results_for_x', qa_html($inquery));
@@ -163,11 +163,11 @@ class qa_tagsearch_page{
 
 
 
-	function qa_get_tag_search_results($query, $start, $count, $userid, $absoluteurls, $fullcontent)
+	function qa_get_tag_search_results($query, $exact_tag_match, $start, $count, $userid)
 	{
 
 
-		$results=$this->process_tag_search($query, $start, $count, $userid, $absoluteurls, $fullcontent);
+		$results=$this->process_tag_search($query, $exact_tag_match, $start, $count, $userid);
 
 		//      Work out what additional information (if any) we need to retrieve for the results
 
@@ -246,7 +246,7 @@ class qa_tagsearch_page{
 
 		return $results;
 	}
-	function process_tag_search($query, $start, $count, $userid, $absoluteurls, $fullcontent)
+	function process_tag_search($query, $exact_tag_match, $start, $count, $userid)
 	{
 		require_once QA_INCLUDE_DIR.'qa-db-selects.php';
 		require_once QA_INCLUDE_DIR.'qa-util-string.php';
@@ -254,7 +254,7 @@ class qa_tagsearch_page{
 		$words=qa_string_to_words($query);
 
 		$questions=qa_db_select_with_pending(
-				$this->qa_db_tag_search_posts_selectspec($userid, $words, $words, $words, $words, trim($query), $start, $fullcontent, $count)
+				$this->qa_db_tag_search_posts_selectspec($userid,  $words, $query, $exact_tag_match,  $start,  $count)
 				);
 
 		$results=array();
@@ -271,12 +271,20 @@ class qa_tagsearch_page{
 
 		return $results;
 	}
-	function qa_db_tag_search_posts_selectspec($voteuserid, $titlewords, $contentwords, $tagwords, $handlewords, $handle, $start, $full=false, $count=null)
+	function qa_db_tag_search_posts_selectspec($voteuserid,  $tagwords, $query, $exact_tag_match, $start,  $count=null)
 	//Modified from qa_db_search_posts_selectspec to do a logical and for all selected TAGS
 	{
 		$count=isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
-
-
+		
+		$tag_match_cond = "";
+		if($exact_tag_match)
+		{
+		$tag_words = explode(" " ,$query);
+		foreach($tag_words as $tag)
+		{
+			$tag_match_cond .=" AND (find_in_set('$tag', ^posts.tags) > 0)";
+		}
+		}
 		$selectspec=qa_db_posts_basic_selectspec($voteuserid, $full);
 
 		$selectspec['columns'][]='score';
@@ -302,7 +310,7 @@ class qa_tagsearch_page{
 
 		$selectspec['source'].="))x  LEFT JOIN ^posts ON ^posts.postid=questionid GROUP BY questionid ORDER BY score DESC LIMIT #,#) y ON ^posts.postid=y.questionid";
 		if(!empty($tagwords)){
-			$selectspec['source'].=" where ^posts.postid  in (select postid AS questionid from ^tagwords JOIN ^words on ^tagwords.wordid=^words.wordid where word IN  ('".implode("','",$tagwords)."') group by questionid having count(*) = ".count($tagwords)."  )";
+			$selectspec['source'].=" where ^posts.postid  in (select postid AS questionid from ^tagwords JOIN ^words on ^tagwords.wordid=^words.wordid where word IN  ('".implode("','",$tagwords)."') $tag_match_cond group by questionid having count(*) = ".count($tagwords)."  )";
 		}
 		array_push($selectspec['arguments'], $start, $count);
 
