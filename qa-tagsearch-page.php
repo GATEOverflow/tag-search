@@ -230,7 +230,7 @@ class qa_tagsearch_page{
 				elseif (isset($result['page']))
 					$result['title']=$result['page']['heading'];
 			}
-
+			$absoluteurls = '';
 			if (!isset($result['url'])) {
 				if (isset($result['question']))
 					$result['url']=qa_q_path($result['question']['postid'], $result['question']['title'],
@@ -285,6 +285,7 @@ class qa_tagsearch_page{
 			$tag_match_cond .=" AND (find_in_set('$tag', ^posts.tags) > 0)";
 		}
 		}
+		$full = '';
 		$selectspec=qa_db_posts_basic_selectspec($voteuserid, $full);
 
 		$selectspec['columns'][]='score';
