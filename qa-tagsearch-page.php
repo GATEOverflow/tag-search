@@ -16,12 +16,12 @@ class qa_tagsearch_page{
 	public function suggest_requests() // for display in admin interface
 	{
 		return array(
-			array(
-				'title' => 'Tag Search Page',
-				'request' => 'tag-search-page',
-				'nav' => 'null', // 'M'=main, 'F'=footer, 'B'=before main, 'O'=opposite main, null=none
-			),
-		);
+				array(
+					'title' => 'Tag Search Page',
+					'request' => 'tag-search-page',
+					'nav' => 'null', // 'M'=main, 'F'=footer, 'B'=before main, 'O'=opposite main, null=none
+				     ),
+			    );
 	}
 
 
@@ -42,8 +42,7 @@ class qa_tagsearch_page{
 		//	Perform the search if appropriate
 
 		if (strlen(qa_get('q'))) {
-			qa_set_template('search');
-
+            qa_set_template('search');
 			//	Pull in input parameters
 
 			$inquery=trim(qa_get('q'));
@@ -80,9 +79,9 @@ class qa_tagsearch_page{
 			//	Report the search event
 
 			qa_report_event('tagsearch', $userid, qa_get_logged_in_handle(), qa_cookie_get(), array(
-				'query' => $inquery,
-				'start' => $start,
-			));
+						'query' => $inquery,
+						'start' => $start,
+						));
 		}
 
 
@@ -91,7 +90,7 @@ class qa_tagsearch_page{
 		$qa_content=qa_content_prepare(true);
 
 		if (strlen(qa_get('q'))) {
-			//	$qa_content['search']['value']=qa_html($inquery);
+		//	$qa_content['search']['value']=qa_html($inquery);
 
 			if (count($results))
 				$qa_content['title']=qa_lang_html_sub('main/results_for_x', qa_html($inquery));
@@ -99,12 +98,12 @@ class qa_tagsearch_page{
 				$qa_content['title']=qa_lang_html_sub('main/no_results_for_x', qa_html($inquery));
 
 			$qa_content['q_list']['form']=array(
-				'tags' => 'method="post" action="'.qa_self_html().'"',
+					'tags' => 'method="post" action="'.qa_self_html().'"',
 
-				'hidden' => array(
-					'code' => qa_get_form_security_code('vote'),
-				),
-			);
+					'hidden' => array(
+						'code' => qa_get_form_security_code('vote'),
+						),
+					);
 
 			$qa_content['q_list']['qs']=array();
 
@@ -121,13 +120,13 @@ class qa_tagsearch_page{
 			foreach ($results as $result) {
 				if (isset($result['question']))
 					$fields=qa_post_html_fields($result['question'], $userid, qa_cookie_get(),
-						$usershtml, null, qa_post_html_options($result['question'], $qdefaults));
+							$usershtml, null, qa_post_html_options($result['question'], $qdefaults));
 
 				elseif (isset($result['url']))
 					$fields=array(
-						'what' => qa_html($result['url']),
-						'meta_order' => qa_lang_html('main/meta_order'),
-					);
+							'what' => qa_html($result['url']),
+							'meta_order' => qa_lang_html('main/meta_order'),
+						     );
 
 				else
 					continue; // nothing to show here
@@ -142,13 +141,13 @@ class qa_tagsearch_page{
 			}
 
 			$qa_content['page_links']=qa_html_page_links(qa_request(), $start, $pagesize, $start+$gotcount,
-				qa_opt('pages_prev_next'), array('q' => $inquery), $gotcount>=$count);
+					qa_opt('pages_prev_next'), array('q' => $inquery), $gotcount>=$count);
 
 			if (qa_opt('feed_for_search'))
 				$qa_content['feed']=array(
-					'url' => qa_path_html(qa_feed_request('search/'.$inquery)),
-					'label' => qa_lang_html_sub('main/results_for_x', qa_html($inquery)),
-				);
+						'url' => qa_path_html(qa_feed_request('search/'.$inquery)),
+						'label' => qa_lang_html_sub('main/results_for_x', qa_html($inquery)),
+						);
 
 			if (empty($qa_content['page_links']))
 				$qa_content['suggest_next']=qa_html_suggest_qs_tags(qa_using_tags());
@@ -195,11 +194,11 @@ class qa_tagsearch_page{
 
 		//      Perform the appropriate database queries
 		list($postidfull, $postidtype, $postidquestion, $pageidpage)=qa_db_select_with_pending(
-			count($keypostidgetfull) ? qa_db_posts_selectspec($userid, array_keys($keypostidgetfull), $fullcontent) : null,
-			count($keypostidgettype) ? qa_db_posts_basetype_selectspec(array_keys($keypostidgettype)) : null,
-			count($keypostidgetquestion) ? qa_db_posts_to_qs_selectspec($userid, array_keys($keypostidgetquestion), $fullcontent) : null,
-			count($keypageidgetpage) ? qa_db_pages_selectspec(null, array_keys($keypageidgetpage)) : null
-		);
+				count($keypostidgetfull) ? qa_db_posts_selectspec($userid, array_keys($keypostidgetfull), $fullcontent) : null,
+				count($keypostidgettype) ? qa_db_posts_basetype_selectspec(array_keys($keypostidgettype)) : null,
+				count($keypostidgetquestion) ? qa_db_posts_to_qs_selectspec($userid, array_keys($keypostidgetquestion), $fullcontent) : null,
+				count($keypageidgetpage) ? qa_db_pages_selectspec(null, array_keys($keypageidgetpage)) : null
+				);
 
 		//      Supplement the results as appropriate
 
@@ -216,7 +215,7 @@ class qa_tagsearch_page{
 						$result['match_type']=@$result['question']['obasetype'];
 
 				} elseif (!isset($result['match_type']))
-					$result['match_type']=@$postidtype[$result['match_postid']];
+				$result['match_type']=@$postidtype[$result['match_postid']];
 			}
 
 			if (isset($result['question']) && !isset($result['question_postid']))
@@ -235,7 +234,7 @@ class qa_tagsearch_page{
 			if (!isset($result['url'])) {
 				if (isset($result['question']))
 					$result['url']=qa_q_path($result['question']['postid'], $result['question']['title'],
-					false, @$result['match_type'], @$result['match_postid']);
+							$absoluteurls, @$result['match_type'], @$result['match_postid']);
 				elseif (isset($result['page']))
 					$result['url']=qa_path($result['page']['tags'], null, qa_opt('site_url'));
 			}
@@ -255,8 +254,8 @@ class qa_tagsearch_page{
 		$words=qa_string_to_words($query);
 
 		$questions=qa_db_select_with_pending(
-			$this->qa_db_tag_search_posts_selectspec($userid,  $words, $query, $exact_tag_match,  $start,  $count)
-		);
+				$this->qa_db_tag_search_posts_selectspec($userid,  $words, $query, $exact_tag_match,  $start,  $count)
+				);
 
 		$results=array();
 
@@ -264,29 +263,30 @@ class qa_tagsearch_page{
 			qa_search_set_max_match($question, $type, $postid); // to link straight to best part
 
 			$results[]=array(
-				'question' => $question,
-				'match_type' => $type,
-				'match_postid' => $postid,
-			);
+					'question' => $question,
+					'match_type' => $type,
+					'match_postid' => $postid,
+					);
 		}
 
 		return $results;
 	}
 	function qa_db_tag_search_posts_selectspec($voteuserid,  $tagwords, $query, $exact_tag_match, $start,  $count=null)
-		//Modified from qa_db_search_posts_selectspec to do a logical and for all selected TAGS
+	//Modified from qa_db_search_posts_selectspec to do a logical and for all selected TAGS
 	{
 		$count=isset($count) ? min($count, QA_DB_RETRIEVE_QS_AS) : QA_DB_RETRIEVE_QS_AS;
-
+		
 		$tag_match_cond = "";
 		if($exact_tag_match)
 		{
-			$tag_words = explode(" " ,$query);
-			foreach($tag_words as $tag)
-			{
-				$tag_match_cond .=" AND (find_in_set('$tag', ^posts.tags) > 0)";
-			}
+		$tag_words = explode(" " ,$query);
+		foreach($tag_words as $tag)
+		{
+			$tag_match_cond .=" AND (find_in_set('$tag', ^posts.tags) > 0)";
 		}
-		$selectspec=qa_db_posts_basic_selectspec($voteuserid, false);
+		}
+		$full = '';
+		$selectspec=qa_db_posts_basic_selectspec($voteuserid, $full);
 
 		$selectspec['columns'][]='score';
 		$selectspec['columns'][]='matchparts';

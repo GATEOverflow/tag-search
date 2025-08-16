@@ -1,13 +1,13 @@
 {
   "name": "TagSearch",
-  "uri": "https://github.com/arjunsuresh/tag-search",
+  "uri": "https://github.com/gateoverflow/tag-search",
   "description": "Adds option to search questions by tag(s) to sidepanel",
-  "version": "1.4",
-  "date": "2021-02-04",
+  "version": "1.5",
+  "date": "2025-08-16",
   "author": "Arjun Suresh",
   "author_uri": "https://gateoverflow.in/user/Arjun",
   "license": "GPLv2",
-  "update_uri": "https://raw.githubusercontent.com/arjunsuresh/tag-search/master/metadata.json",
+  "update_uri": "https://raw.githubusercontent.com/gateoverflow/tag-search/master/metadata.json",
   "min_q2a": "1.5",
   "min_php": "5.1.6",
   "load_order": "after_db_init"

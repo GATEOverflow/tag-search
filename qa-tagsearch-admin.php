@@ -10,51 +10,47 @@ class qa_tagsearch_admin {
 
 		switch($option) {
 			case 'tagsearch_plugin_css':
-return	'.qam-tag-search  {
-background :#4c9ed9;
-				}
-				.qa-tag-search {
-padding: 8px;
-	 margin-bottom: 5px;
-				}
-				.qa-tag-search-field {
-padding: 0 40px 0 5px;
-	 vertical-align: bottom;
-width: 85%;
-height: 36px;
-	border-width: 1px;
-	border-style: solid;
-	border-color: transparent;
-				}
+return '
+.qa-tag-search-group {
+    position: relative;
+}
 
-				.qa-tag-search-button {
-width: 12%;
-height: 36px;
-margin: 0!important;
-	text-indent: -9999px;
-background: #bdc3c7 url("'.$this->getMyPath(__DIR__).'/images/search-icon-white.png") center no-repeat;
-border: none;
-outline: none;
-background-color: #117964;
-				}
+.tagsearch-widget-container #tag_search {
+    border: none;
+    width: 100%;
+    max-width: 100%;
+    background-color: #f1f3f4;
+    padding: .8rem 2.5rem .8rem .8rem; /* give space for search icon */
+    margin-bottom: .5rem;
+    border-radius: 6px;
+}
 
-				';
+.qa-tag-search-group .qa-search-button {
+    position: absolute;
+    right: 2px; /* border */
+    top: 50%;
+    transform: translateY(-50%);
+	border-radius: 6px;
+}
+
+.qa-tag-search .qa-tag-link, .qa-tag-search a.qa-tag-link {
+    margin-top: .5rem;
+    margin-bottom: 0;
+}
+';
 			default:
 				return null;
 
 		}
 	}
+	
 	function admin_form(&$qa_content)
 	{
 
 		//	Process form input
-
 		$ok = null;
 		if (qa_clicked('tagsearch_save_button')) {
-
 			qa_opt('tagsearch_plugin_css',qa_post_text('tagsearch_plugin_css'));
-
-
 			$ok = qa_lang('admin/options_saved');
 		}
 		else if (qa_clicked('tagsearch_reset_button')) {
@@ -63,12 +59,10 @@ background-color: #117964;
 				if($def !== null) qa_opt($i,$def);
 			}
 			$ok = qa_lang('admin/options_reset');
-		}			
+		}
+		
 		//	Create the form for display
-
-
 		$fields = array();
-
 
 		$fields[] = array(
 				'label' => 'Tag Search custom css',
@@ -77,7 +71,6 @@ background-color: #117964;
 				'type' => 'textarea',
 				'rows' => 20
 				);
-
 
 		return array(
 				'ok' => ($ok && !isset($error)) ? $ok : null,
@@ -96,10 +89,10 @@ background-color: #117964;
 					),
 			    );
 	}
+	
 	function getMyPath($location) { 
 		$getMyPath = str_replace($_SERVER['DOCUMENT_ROOT'],'',$location); 
 		return $getMyPath; 
 	} 
-
 
 }

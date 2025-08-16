@@ -42,7 +42,7 @@
 				require_once QA_INCLUDE_DIR.'db/selects.php';
                 		$ctags=array_keys(qa_db_single_select(qa_db_popular_tags_selectspec(0, QA_DB_RETRIEVE_COMPLETE_TAGS)));	
 				$output = qa_html(implode(',',$ctags));
-				header('Access-Control-Allow-Origin: '.qa_path(null));
+				header('Access-Control-Allow-Origin: '.qa_path(''));
 				echo $output;
 				
 				exit(); 
